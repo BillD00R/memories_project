@@ -8,24 +8,37 @@ import LockOutlinedIcon from '@material-ui/icons/LockOutlined';
 import useStyles from './styles';
 import Input from './Input.js';
 import Icon from './icon';
+import { signUp, signIn } from '../../actions/auth';
+
+const initialState = { firstName: '', lastName: '', email: '', password: '', confirmPassword: '' };
 
 const Auth = () => {
     const classes = useStyles();
     const [showPassword, setShowPassword] = useState(false);
     const [isSignUp, setIsSignUp] = useState(true);
+    const [formData, setFormData] = useState(initialState);
     const dispatch = useDispatch();
     const history = useHistory();
 
-    const handleSubmit = () => {};
+    const handleSubmit = (event) => {
+        event.preventDefault;
+        if (isSignUp) {
+            dispatch(signUp(formData, history));
+        } else {
+            dispatch(signIn(formData, history));
+        }
+    };
 
-    const handleChange = () => {};
+    const handleChange = (event) => setFormData({ ...formData, [event.target.name]: event.target.value });
 
     const handleShowPassword = () => {
         setShowPassword((prevShowPassword) => !prevShowPassword);
     };
 
     const switchMode = () => {
+        setFormData(initialState);
         setIsSignUp((prevIsSignUp) => !prevIsSignUp);
+        setShowPassword(false);
     };
 
     const googleSuccess = async (res) => {
@@ -45,14 +58,14 @@ const Auth = () => {
         console.log('Google auth failed. Please try again');
     };
 
-    const Name = isSignUp && (
+    const Name = isSignUp ? (
         <>
             <Input name="firstName" label="First Name" handleChange={handleChange} autoFocus half />
             <Input name="lastName" label="Last Name" handleChange={handleChange} half />
         </>
-    );
+    ) : null;
 
-    const repeatPassword = isSignUp && <Input name="confirmPassword" label="Repeat Password" handleChange={handleChange} type="password" />;
+    const repeatPassword = isSignUp ? <Input name="confirmPassword" label="Repeat Password" handleChange={handleChange} type="password" /> : null;
 
     const signUpText = isSignUp ? 'Sign Up' : 'Sign In';
     return (
