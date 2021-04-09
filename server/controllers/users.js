@@ -18,7 +18,6 @@ export const signIn = async (req, res) => {
         const token = jwt.sign({ email: existingUser.email, id: existingUser._id }, 'test', { expiresIn: '1h' });
 
         res.status(200).json({ result: existingUser, token });
-        console.log(existingUser);
     } catch (error) {
         res.status(500).json({ message: error.message });
     }
@@ -40,7 +39,6 @@ export const signUp = async (req, res) => {
         const token = jwt.sign({ email: result.email, id: result._id }, 'test', { expiresIn: '1h' });
 
         res.status(201).json({ result, token });
-        console.log(result);
     } catch (error) {
         res.status(500).json({ message: error.message });
     }

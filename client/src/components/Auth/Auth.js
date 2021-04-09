@@ -15,13 +15,13 @@ const initialState = { firstName: '', lastName: '', email: '', password: '', con
 const Auth = () => {
     const classes = useStyles();
     const [showPassword, setShowPassword] = useState(false);
-    const [isSignUp, setIsSignUp] = useState(true);
+    const [isSignUp, setIsSignUp] = useState(false);
     const [formData, setFormData] = useState(initialState);
     const dispatch = useDispatch();
     const history = useHistory();
 
     const handleSubmit = (event) => {
-        event.preventDefault;
+        event.preventDefault();
         if (isSignUp) {
             dispatch(signUp(formData, history));
         } else {
@@ -29,14 +29,15 @@ const Auth = () => {
         }
     };
 
-    const handleChange = (event) => setFormData({ ...formData, [event.target.name]: event.target.value });
+    const handleChange = (event) => {
+        setFormData({ ...formData, [event.target.name]: event.target.value });
+    };
 
     const handleShowPassword = () => {
         setShowPassword((prevShowPassword) => !prevShowPassword);
     };
 
     const switchMode = () => {
-        setFormData(initialState);
         setIsSignUp((prevIsSignUp) => !prevIsSignUp);
         setShowPassword(false);
     };

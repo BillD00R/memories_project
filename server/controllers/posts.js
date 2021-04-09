@@ -14,9 +14,11 @@ export const getPosts = async (req, res) => {
 };
 
 export const createPost = async (req, res) => {
+    if (!req.userId) return res.json({ message: 'Unauthenticated.' });
+
     const post = req.body;
 
-    const newPost = new PostMessage(post);
+    const newPost = new PostMessage({ ...post, creator: req.userId, createdAt: new Date().toISOString() });
 
     try {
         await newPost.save();
@@ -29,6 +31,9 @@ export const createPost = async (req, res) => {
 
 export const updatePost = async (req, res) => {
     const { id: _id } = req.params;
+
+    if (!req.userId) return res.json({ message: 'Unauthenticated.' });
+
     const post = req.body;
 
     if (!mongoose.Types.ObjectId.isValid(_id)) return res.status(404).send(`No post with id = ${_id}`);
@@ -40,6 +45,9 @@ export const updatePost = async (req, res) => {
 
 export const deletePost = async (req, res) => {
     const { id } = req.params;
+
+    if (!req.userId) return res.json({ message: 'Unauthenticated.' });
+
     if (!mongoose.Types.ObjectId.isValid(id)) return res.status(404).send(`No post with id = ${id}`);
 
     await PostMessage.findByIdAndRemove(id);
@@ -52,14 +60,14 @@ export const likePost = async (req, res) => {
 
     if (!req.userId) return res.json({ message: 'Unauthenticated.' });
 
-    if (!mongoose.Types.ObjectId.isValid(id)) return res.status(404).send(`No post with id = ${_id}`);
+    if (!mongoose.Types.ObjectId.isValid(id)) return res.status(404).send(`No post with id = ${id}`);
 
     const post = await PostMessage.findById(id);
 
     const index = post.likes.findIndex((id) => id === String(req.userId));
 
     if (index === -1) {
-        postMessage.likes.push(req.userId);
+        post.likes.push(req.userId);
     } else {
         post.likes = post.likes.filter((id) => id !== String(req.userId));
     }
